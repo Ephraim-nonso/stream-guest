@@ -35,7 +35,7 @@ StreamGuestPay aims to:
 
 ### Wallet Integration
 
-- **[WalletConnect (Reown AppKit)](https://docs.reown.com/appkit)** - Web3 wallet connection solution
+- **[WalletConnect (https://docs.reown.com/appkit)** - Web3 wallet connection solution
   - Multi-wallet support (MetaMask, Coinbase Wallet, WalletConnect, etc.)
   - Seamless connection experience
 

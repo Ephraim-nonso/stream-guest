@@ -26,30 +26,30 @@ function RoleCard({
   return (
     <div
       className={`
-        bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300
+        bg-white rounded-xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-all duration-300
         flex flex-col h-full
         ${borderColor ? `border-l-4 ${borderColor}` : ''}
       `}
     >
       {/* Icon */}
-      <div className="mb-6">{icon}</div>
+      <div className="mb-4 sm:mb-6 flex justify-center sm:justify-start">{icon}</div>
 
       {/* Title */}
-      <h3 className="text-2xl font-bold text-[#1a1a2e] mb-3">{title}</h3>
+      <h3 className="text-xl sm:text-2xl font-bold text-[#1a1a2e] mb-2 sm:mb-3 text-center sm:text-left">{title}</h3>
 
       {/* Description */}
-      <p className="text-gray-600 mb-6 flex-grow leading-relaxed">
+      <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 flex-grow leading-relaxed text-center sm:text-left">
         {description}
       </p>
 
       {/* Get Started Button */}
       <button
         onClick={onGetStarted}
-        className={`${buttonColor} ${buttonHoverColor} flex items-center gap-2 w-full justify-center font-medium transition-colors py-2 cursor-pointer`}
+        className={`${buttonColor} ${buttonHoverColor} flex items-center gap-2 w-full justify-center font-medium transition-colors py-3 sm:py-2 rounded-lg cursor-pointer text-sm sm:text-base`}
       >
         {buttonText}
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4 sm:w-5 sm:h-5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -89,13 +89,13 @@ export function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
   };
 
   return (
-    <section className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center px-6 py-12 md:px-8 md:py-16">
+    <section className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16">
       <div className="max-w-4xl mx-auto w-full">
         {/* Wallet Connected Badge */}
-        <div className="flex justify-center mb-6">
-          <div className="bg-green-500 text-white px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium">
+        <div className="flex justify-center mb-4 sm:mb-6">
+          <div className="bg-green-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium">
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -113,22 +113,22 @@ export function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
         </div>
 
         {/* Main Title */}
-        <h1 className="text-4xl md:text-5xl font-bold text-[#1a1a2e] text-center mb-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a1a2e] text-center mb-3 sm:mb-4 px-2">
           Welcome to StreamPay
         </h1>
 
         {/* Subtitle */}
-        <p className="text-gray-600 text-center mb-2">Choose your role to get started</p>
+        <p className="text-sm sm:text-base text-gray-600 text-center mb-2 px-4">Choose your role to get started</p>
 
         {/* Wallet Address */}
         {address && (
-          <p className="text-sm text-gray-500 text-center mb-12 font-mono">
+          <p className="text-xs sm:text-sm text-gray-500 text-center mb-8 sm:mb-12 font-mono px-4 break-all">
             {formatAddress(address)}
           </p>
         )}
 
         {/* Role Selection Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
           {/* Expert Card */}
           <RoleCard
             icon={
