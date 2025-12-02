@@ -46,3 +46,4 @@ guest-contracts/out/
 guest-contracts/cache/
 guest-contracts/broadcast/
 guest-contracts/.forge/
+guest-contracts/lib
