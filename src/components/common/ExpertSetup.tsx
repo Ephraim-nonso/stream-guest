@@ -58,7 +58,6 @@ export function ExpertSetup({
 
     if (Object.keys(newErrors).length === 0) {
       // TODO: Handle form submission
-      console.log('Expert setup submitted:', formData);
       // Save user role
       setUserRole('expert');
       // Navigate to dashboard on successful submission

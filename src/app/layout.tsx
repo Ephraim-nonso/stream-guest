@@ -5,6 +5,7 @@ import "./globals.css";
 import "../styles/variables.css";
 import { AppProvider } from "@/context/AppContext";
 import AppKitContextProvider from "@/context/AppKitContext";
+import { StreamChatProvider } from "@/components/chat/StreamChatProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +37,9 @@ export default async function RootLayout({
       >
         <AppKitContextProvider cookies={cookies}>
           <AppProvider>
-            {children}
+            <StreamChatProvider>
+              {children}
+            </StreamChatProvider>
           </AppProvider>
         </AppKitContextProvider>
       </body>

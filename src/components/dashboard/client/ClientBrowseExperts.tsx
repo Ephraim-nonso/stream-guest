@@ -1,6 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
+import { useAccount } from "wagmi";
+import { useRouter } from "next/navigation";
+import { useChatContext } from "stream-chat-react";
+import { createChannelId } from "@/components/chat/ChatUtils";
 
 interface Expert {
   id: string;
@@ -13,33 +17,35 @@ interface Expert {
   hourlyRate: number;
 }
 
+// Expert data with full wallet addresses
+// In production, these would come from your backend/database
 const experts: Expert[] = [
   {
-    id: '1',
-    name: 'Dr. Sarah Chen',
-    title: 'Senior Product Manager, Former VP at Web3 Startup',
-    expertise: ['Web3', 'DeFi', 'Blockchain Infrastructure'],
-    walletAddress: '0x742d35Cc6634C05329...',
+    id: "1",
+    name: "Dr. Sarah Chen",
+    title: "Senior Product Manager, Former VP at Web3 Startup",
+    expertise: ["Web3", "DeFi", "Blockchain Infrastructure"],
+    walletAddress: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
     rating: 4.9,
     reviewCount: 14,
     hourlyRate: 300,
   },
   {
-    id: '2',
-    name: 'Marcus Johnson',
-    title: 'Chief Technology Officer, Crypto Exchange',
-    expertise: ['Security', 'Smart Contracts', 'Protocol Design'],
-    walletAddress: '0x8f9e5d2c1a4b3e7f6c...',
+    id: "2",
+    name: "Marcus Johnson",
+    title: "Chief Technology Officer, Crypto Exchange",
+    expertise: ["Security", "Smart Contracts", "Protocol Design"],
+    walletAddress: "0x8f9e5d2c1a4b3e7f6c8d9e0f1a2b3c4d5e6f7a8b",
     rating: 5.0,
     reviewCount: 28,
     hourlyRate: 450,
   },
   {
-    id: '3',
-    name: 'Lisa Anderson',
-    title: 'Tokenomics Specialist, Former DAO Advisor',
-    expertise: ['Tokenomics', 'DAO Governance', 'NFTs'],
-    walletAddress: '0x2b4e6a8c0d2f4e6a8c...',
+    id: "3",
+    name: "Lisa Anderson",
+    title: "Tokenomics Specialist, Former DAO Advisor",
+    expertise: ["Tokenomics", "DAO Governance", "NFTs"],
+    walletAddress: "0x2b4e6a8c0d2f4e6a8c0d2f4e6a8c0d2f4e6a8c0d2f",
     rating: 4.8,
     reviewCount: 19,
     hourlyRate: 250,
@@ -47,12 +53,80 @@ const experts: Expert[] = [
 ];
 
 export function ClientBrowseExperts() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isConnecting, setIsConnecting] = useState<string | null>(null);
+  const { address } = useAccount();
+  const router = useRouter();
 
-  const handleConnectExpert = (expertId: string) => {
-    // TODO: Implement connection functionality
-    // This will create a chat connection between client and expert
-    console.log('Connect with expert:', expertId);
+  // Get chat client - wrap in try/catch since it might not be available
+  let client;
+  try {
+    const chatContext = useChatContext();
+    client = chatContext?.client;
+  } catch {
+    client = null;
+  }
+
+  const handleConnectExpert = async (expertId: string) => {
+    if (!address) {
+      alert("Please connect your wallet first.");
+      return;
+    }
+
+    if (!client) {
+      alert("Chat is not available. Please wait for chat to initialize.");
+      return;
+    }
+
+    setIsConnecting(expertId);
+
+    try {
+      // Find the expert's wallet address from the expert data
+      const expert = experts.find((e) => e.id === expertId);
+      if (!expert) {
+        console.error("Expert not found");
+        setIsConnecting(null);
+        return;
+      }
+
+      const expertAddress = expert.walletAddress.toLowerCase();
+      const clientAddress = address.toLowerCase();
+
+      // Create channel ID (format: "messaging-address1-address2")
+      const fullChannelId = createChannelId(clientAddress, expertAddress);
+      const channelType = "messaging";
+
+      // Extract just the ID part (address1-address2) from the full channel ID
+      // createChannelId returns "messaging-address1-address2"
+      // We need to extract "address1-address2" for the channel ID
+      const parts = fullChannelId.split("-");
+      const channelId = parts.slice(1).join("-"); // Remove "messaging" prefix
+
+      // Create or get the channel
+      // Note: Channel name can be set after creation if needed
+      const channel = client.channel(channelType, channelId, {
+        members: [clientAddress, expertAddress],
+      });
+
+      // Watch the channel to ensure it's active and create it if it doesn't exist
+      await channel.watch();
+
+      // Navigate to chats tab with the full channel ID (for URL parsing)
+      router.push(`/${address}/dashboard/chats?channel=${fullChannelId}`);
+    } catch (error) {
+      console.error("Error creating chat channel:", error);
+      console.error("Error details:", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      alert(
+        `Failed to create chat: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }. Please check the console for details.`
+      );
+    } finally {
+      setIsConnecting(null);
+    }
   };
 
   const renderStars = (rating: number) => {
@@ -204,9 +278,7 @@ export function ClientBrowseExperts() {
                       d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
                     />
                   </svg>
-                  <span className="font-mono">
-                    {expert.walletAddress}
-                  </span>
+                  <span className="font-mono">{expert.walletAddress}</span>
                 </div>
 
                 {/* Rating and Hourly Rate */}
@@ -223,7 +295,7 @@ export function ClientBrowseExperts() {
                   <div className="text-sm text-gray-600">
                     <span className="font-semibold text-[#1a1a2e]">
                       ${expert.hourlyRate}
-                    </span>{' '}
+                    </span>{" "}
                     per hour
                   </div>
                 </div>
@@ -233,24 +305,55 @@ export function ClientBrowseExperts() {
               <div className="md:ml-4 w-full md:w-auto">
                 <button
                   onClick={() => handleConnectExpert(expert.id)}
-                  className="w-full md:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap flex items-center justify-center gap-2 text-sm sm:text-base"
+                  disabled={isConnecting === expert.id}
+                  className="w-full md:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
-                  <svg
-                    className="w-4 h-4 sm:w-5 sm:h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                    />
-                  </svg>
-                  <span className="hidden sm:inline">Connect & Message</span>
-                  <span className="sm:hidden">Message</span>
+                  {isConnecting === expert.id ? (
+                    <>
+                      <svg
+                        className="animate-spin h-4 w-4 sm:h-5 sm:w-5"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      <span>Connecting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-4 h-4 sm:w-5 sm:h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                        />
+                      </svg>
+                      <span className="hidden sm:inline">
+                        Connect & Message
+                      </span>
+                      <span className="sm:hidden">Message</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -260,4 +363,3 @@ export function ClientBrowseExperts() {
     </div>
   );
 }
-

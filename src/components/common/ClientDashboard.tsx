@@ -109,12 +109,10 @@ export function ClientDashboard() {
 
   const handleSendTestDeposit = (expertId: string) => {
     // TODO: Implement test deposit functionality
-    console.log("Send test deposit for expert:", expertId);
   };
 
   const handleStartStream = (callId: string) => {
     // TODO: Implement start stream functionality
-    console.log("Start stream for call:", callId);
   };
 
   const renderStars = (rating: number) => {

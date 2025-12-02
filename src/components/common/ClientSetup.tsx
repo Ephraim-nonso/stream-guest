@@ -32,7 +32,6 @@ export function ClientSetup({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Handle form submission
-    console.log('Client setup submitted:', formData);
     // Save user role
     setUserRole('client');
     // Navigate to dashboard on successful submission

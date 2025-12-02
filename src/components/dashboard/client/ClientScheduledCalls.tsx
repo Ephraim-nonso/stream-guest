@@ -27,7 +27,6 @@ const scheduledCalls: ScheduledCall[] = [
 export function ClientScheduledCalls() {
   const handleStartStream = (callId: string) => {
     // TODO: Implement start stream functionality
-    console.log('Start stream for call:', callId);
   };
 
   return (

@@ -32,3 +32,44 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
+
+/* Stream Chat Customization */
+.str-chat {
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+}
+
+.str-chat__channel-list {
+  background: white;
+}
+
+.str-chat__channel-list-message {
+  color: #1a1a2e;
+}
+
+.str-chat__channel-preview {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.str-chat__channel-preview:hover {
+  background-color: #f9fafb;
+}
+
+.str-chat__message {
+  color: #1a1a2e;
+}
+
+.str-chat__message-input {
+  border-top: 1px solid #e5e7eb;
+}
+
+.str-chat__input {
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+}
+
+.str-chat__input:focus {
+  border-color: #2563eb;
+  outline: none;
+  ring: 2px;
+  ring-color: #2563eb;
+}

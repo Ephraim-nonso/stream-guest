@@ -110,7 +110,6 @@ export function ExpertDashboard() {
 
   const handleStartCall = (consultationId: string) => {
     // TODO: Implement start call functionality
-    console.log('Start call for consultation:', consultationId);
   };
 
   return (

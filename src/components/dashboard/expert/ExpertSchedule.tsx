@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 interface ScheduledConsultation {
   id: string;
@@ -13,22 +13,22 @@ interface ScheduledConsultation {
 
 const scheduledConsultations: ScheduledConsultation[] = [
   {
-    id: '1',
-    clientName: 'Michael Roberts',
-    organization: 'Blockchain Ventures',
-    date: '2025-11-30',
-    time: '14:00',
-    duration: '60 min',
+    id: "1",
+    clientName: "Michael Roberts",
+    organization: "Blockchain Ventures",
+    date: "2025-11-30",
+    time: "14:00",
+    duration: "60 min",
     hasTestDeposit: true,
     canStart: true,
   },
   {
-    id: '2',
-    clientName: 'Emily Watson',
-    organization: 'DeFi Research Group',
-    date: '2025-12-02',
-    time: '10:30',
-    duration: '30 min',
+    id: "2",
+    clientName: "Emily Watson",
+    organization: "DeFi Research Group",
+    date: "2025-12-02",
+    time: "10:30",
+    duration: "30 min",
     hasTestDeposit: false,
     canStart: false,
   },
@@ -37,7 +37,6 @@ const scheduledConsultations: ScheduledConsultation[] = [
 export function ExpertSchedule() {
   const handleStartCall = (consultationId: string) => {
     // TODO: Implement start call functionality
-    console.log('Start call for consultation:', consultationId);
   };
 
   return (
@@ -48,7 +47,9 @@ export function ExpertSchedule() {
 
       {scheduledConsultations.length === 0 ? (
         <div className="text-center py-8 sm:py-12">
-          <p className="text-sm sm:text-base text-gray-600">No upcoming consultations.</p>
+          <p className="text-sm sm:text-base text-gray-600">
+            No upcoming consultations.
+          </p>
         </div>
       ) : (
         <div className="space-y-3 sm:space-y-4">
@@ -92,8 +93,8 @@ export function ExpertSchedule() {
                     onClick={() => handleStartCall(consultation.id)}
                     className={`w-full md:w-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap text-sm sm:text-base ${
                       consultation.canStart
-                        ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                        : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        ? "bg-orange-500 hover:bg-orange-600 text-white"
+                        : "bg-gray-200 text-gray-500 cursor-not-allowed"
                     }`}
                     disabled={!consultation.canStart}
                   >
@@ -108,4 +109,3 @@ export function ExpertSchedule() {
     </div>
   );
 }
-
