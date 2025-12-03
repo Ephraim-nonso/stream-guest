@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useAccount } from 'wagmi';
-import { useRouter } from 'next/navigation';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useState } from "react";
+import { useAccount } from "wagmi";
+import { useRouter } from "next/navigation";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 export function ClientSetup({
   onBack,
@@ -14,14 +14,17 @@ export function ClientSetup({
 }) {
   const { address } = useAccount();
   const router = useRouter();
-  const [, setUserRole] = useLocalStorage<'expert' | 'client' | null>('userRole', null);
+  const [, setUserRole] = useLocalStorage<"expert" | "client" | null>(
+    "userRole",
+    null
+  );
   const [formData, setFormData] = useState({
-    fullName: 'jdskmmk',
-    company: 'sfewc',
+    fullName: "jdskmmk",
+    company: "sfewc",
   });
 
   const formatAddress = (addr: string | undefined) => {
-    if (!addr) return '';
+    if (!addr) return "";
     return addr;
   };
 
@@ -33,7 +36,7 @@ export function ClientSetup({
     e.preventDefault();
     // TODO: Handle form submission
     // Save user role
-    setUserRole('client');
+    setUserRole("client");
     // Navigate to dashboard on successful submission
     if (address) {
       router.push(`/${address}/dashboard/browse-experts`);
@@ -65,7 +68,7 @@ export function ClientSetup({
                 type="text"
                 id="fullName"
                 value={formData.fullName}
-                onChange={(e) => handleChange('fullName', e.target.value)}
+                onChange={(e) => handleChange("fullName", e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 placeholder="Enter your full name"
               />
@@ -83,7 +86,7 @@ export function ClientSetup({
                 type="text"
                 id="company"
                 value={formData.company}
-                onChange={(e) => handleChange('company', e.target.value)}
+                onChange={(e) => handleChange("company", e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 placeholder="Enter your company or organization"
               />
@@ -132,7 +135,8 @@ export function ClientSetup({
                   </div>
                 </div>
                 <p className="text-xs text-gray-600 mt-2">
-                  Ensure your wallet has sufficient USDC balance for streaming payments
+                  Ensure your wallet has sufficient USDC balance for streaming
+                  payments
                 </p>
               </div>
             </div>
@@ -244,4 +248,3 @@ export function ClientSetup({
     </section>
   );
 }
-

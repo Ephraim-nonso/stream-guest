@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useAccount } from 'wagmi';
-import { useRouter } from 'next/navigation';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useState } from "react";
+import { useAccount } from "wagmi";
+import { useRouter } from "next/navigation";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 export function ExpertSetup({
   onBack,
@@ -14,23 +14,26 @@ export function ExpertSetup({
 }) {
   const { address } = useAccount();
   const router = useRouter();
-  const [, setUserRole] = useLocalStorage<'expert' | 'client' | null>('userRole', null);
+  const [, setUserRole] = useLocalStorage<"expert" | "client" | null>(
+    "userRole",
+    null
+  );
   const [formData, setFormData] = useState({
-    fullName: 'John Doe',
-    professionalTitle: 'Senior Product Manager, Former VP at Tech Co',
-    areaOfExpertise: 'Web3, DeFi, Blocko',
-    hourlyRate: '300',
+    fullName: "John Doe",
+    professionalTitle: "Senior Product Manager, Former VP at Tech Co",
+    areaOfExpertise: "Web3, DeFi, Blocko",
+    hourlyRate: "300",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const formatAddress = (addr: string | undefined) => {
-    if (!addr) return '';
+    if (!addr) return "";
     return addr;
   };
 
   const calculateRatePerSecond = (hourlyRate: string) => {
     const rate = parseFloat(hourlyRate);
-    if (isNaN(rate) || rate <= 0) return 'NaN';
+    if (isNaN(rate) || rate <= 0) return "NaN";
     return (rate / 3600).toFixed(6);
   };
 
@@ -51,7 +54,7 @@ export function ExpertSetup({
     const newErrors: Record<string, string> = {};
 
     if (!formData.areaOfExpertise.trim()) {
-      newErrors.areaOfExpertise = 'Please fill out this field.';
+      newErrors.areaOfExpertise = "Please fill out this field.";
     }
 
     setErrors(newErrors);
@@ -59,7 +62,7 @@ export function ExpertSetup({
     if (Object.keys(newErrors).length === 0) {
       // TODO: Handle form submission
       // Save user role
-      setUserRole('expert');
+      setUserRole("expert");
       // Navigate to dashboard on successful submission
       if (address) {
         router.push(`/${address}/dashboard/overview`);
@@ -92,7 +95,7 @@ export function ExpertSetup({
                 type="text"
                 id="fullName"
                 value={formData.fullName}
-                onChange={(e) => handleChange('fullName', e.target.value)}
+                onChange={(e) => handleChange("fullName", e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 placeholder="Enter your full name"
               />
@@ -111,7 +114,7 @@ export function ExpertSetup({
                 id="professionalTitle"
                 value={formData.professionalTitle}
                 onChange={(e) =>
-                  handleChange('professionalTitle', e.target.value)
+                  handleChange("professionalTitle", e.target.value)
                 }
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 placeholder="Enter your professional title"
@@ -131,12 +134,10 @@ export function ExpertSetup({
                 id="areaOfExpertise"
                 value={formData.areaOfExpertise}
                 onChange={(e) =>
-                  handleChange('areaOfExpertise', e.target.value)
+                  handleChange("areaOfExpertise", e.target.value)
                 }
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all ${
-                  errors.areaOfExpertise
-                    ? 'border-red-500'
-                    : 'border-gray-300'
+                  errors.areaOfExpertise ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="e.g., Web3, DeFi, Blockchain"
               />
@@ -159,14 +160,15 @@ export function ExpertSetup({
                 type="number"
                 id="hourlyRate"
                 value={formData.hourlyRate}
-                onChange={(e) => handleChange('hourlyRate', e.target.value)}
+                onChange={(e) => handleChange("hourlyRate", e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 placeholder="Enter your hourly rate"
                 min="0"
                 step="0.01"
               />
               <p className="mt-2 text-sm text-gray-600">
-                Payment will stream at ${calculateRatePerSecond(formData.hourlyRate)}/second
+                Payment will stream at $
+                {calculateRatePerSecond(formData.hourlyRate)}/second
               </p>
             </div>
 
@@ -240,4 +242,3 @@ export function ExpertSetup({
     </section>
   );
 }
-

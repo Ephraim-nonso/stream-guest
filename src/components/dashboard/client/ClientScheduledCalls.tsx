@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 interface ScheduledCall {
   id: string;
@@ -8,19 +8,19 @@ interface ScheduledCall {
   time: string;
   duration: string;
   hourlyRate: number;
-  status: 'confirmed' | 'pending' | 'cancelled';
+  status: "confirmed" | "pending" | "cancelled";
 }
 
 const scheduledCalls: ScheduledCall[] = [
   {
-    id: '1',
-    expertName: 'Dr. Sarah Chen',
-    expertise: ['Web3', 'DeFi'],
-    date: '2025-12-01',
-    time: '15:00',
-    duration: '60 min',
+    id: "1",
+    expertName: "Dr. Sarah Chen",
+    expertise: ["Web3", "DeFi"],
+    date: "2025-12-01",
+    time: "15:00",
+    duration: "60 min",
     hourlyRate: 300,
-    status: 'confirmed',
+    status: "confirmed",
   },
 ];
 
@@ -37,7 +37,9 @@ export function ClientScheduledCalls() {
 
       {scheduledCalls.length === 0 ? (
         <div className="text-center py-8 sm:py-12">
-          <p className="text-sm sm:text-base text-gray-600">No scheduled calls yet.</p>
+          <p className="text-sm sm:text-base text-gray-600">
+            No scheduled calls yet.
+          </p>
         </div>
       ) : (
         <div className="space-y-3 sm:space-y-4">
@@ -56,16 +58,16 @@ export function ClientScheduledCalls() {
                     </h3>
                     <span
                       className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
-                        call.status === 'confirmed'
-                          ? 'bg-green-100 text-green-700'
-                          : call.status === 'pending'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-red-100 text-red-700'
+                        call.status === "confirmed"
+                          ? "bg-green-100 text-green-700"
+                          : call.status === "pending"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-red-100 text-red-700"
                       }`}
                     >
-                      {call.status === 'confirmed' && 'Confirmed ✓'}
-                      {call.status === 'pending' && 'Pending'}
-                      {call.status === 'cancelled' && 'Cancelled'}
+                      {call.status === "confirmed" && "Confirmed ✓"}
+                      {call.status === "pending" && "Pending"}
+                      {call.status === "cancelled" && "Cancelled"}
                     </span>
                   </div>
 
@@ -124,4 +126,3 @@ export function ClientScheduledCalls() {
     </div>
   );
 }
-

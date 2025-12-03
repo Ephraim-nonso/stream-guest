@@ -67,12 +67,12 @@ export function ChatInterfaceInner({
       return;
     }
 
-    // The channelId format from createChannelId is: "messaging-address1-address2"
+    // The channelId format from createChannelId is: "messaging-{hash}"
     // We need to split it to get the type and the actual ID
     const parts = channelIdParam.split("-");
-    if (parts.length >= 3) {
+    if (parts.length >= 2) {
       const channelType = parts[0]; // "messaging"
-      const actualChannelId = parts.slice(1).join("-"); // "address1-address2"
+      const actualChannelId = parts.slice(1).join("-"); // "{hash}"
 
       // Get or create the channel
       const channel = client.channel(channelType, actualChannelId);
@@ -122,28 +122,54 @@ export function ChatInterfaceInner({
   }
 
   return (
-    <div className="flex flex-col md:flex-row h-[calc(100vh-300px)] min-h-[500px] sm:min-h-[600px] bg-white rounded-xl shadow-sm overflow-hidden">
+    <div className="flex flex-col md:flex-row h-[calc(100vh-200px)] min-h-[600px] bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
       {/* Channel List Sidebar */}
-      <div className="w-full md:w-80 border-b md:border-b-0 md:border-r border-gray-200 flex-shrink-0 h-64 md:h-auto">
-        <div className="p-3 sm:p-4 border-b border-gray-200">
-          <h2 className="text-base sm:text-lg font-semibold text-[#1a1a2e]">
-            Messages
-          </h2>
+      <div className="w-full md:w-80 lg:w-96 border-b md:border-b-0 md:border-r border-gray-200 flex-shrink-0 bg-white">
+        <div className="p-4 sm:p-5 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-white">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-[#1a1a2e]">Messages</h2>
+              <p className="text-xs text-gray-500 mt-0.5">Your conversations</p>
+            </div>
+          </div>
         </div>
-        <div className="h-[calc(100%-60px)] overflow-y-auto">
-          <ChannelList filters={filters} sort={sort} />
+        <div className="h-[calc(100%-80px)] overflow-y-auto bg-white">
+          <ChannelList
+            filters={filters}
+            sort={sort}
+            options={{ state: true, watch: true, presence: true }}
+          />
         </div>
       </div>
 
       {/* Chat Window */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0 bg-gray-50">
         <Channel channel={activeChannel || undefined}>
           <Window>
-            <ChannelHeader />
-            <div className="flex-1 overflow-y-auto">
+            <div className="bg-white border-b border-gray-200 shadow-sm">
+              <ChannelHeader />
+            </div>
+            <div className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-50 to-white p-4 sm:p-6 relative">
               <MessageList />
             </div>
-            <MessageInput />
+            <div className="bg-white border-t border-gray-200 shadow-lg">
+              <MessageInput />
+            </div>
           </Window>
           <Thread />
         </Channel>

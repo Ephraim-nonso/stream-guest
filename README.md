@@ -21,6 +21,7 @@ StreamGuestPay aims to:
 - **Real-Time Payment Streaming**: Payments flow per second during consultations via USDC streams
 - **Expert Dashboard**: Track earnings, completed calls, hourly rates, and manage scheduled consultations
 - **Client Dashboard**: Browse experts, schedule consultations, send test deposits, and view call history
+- **Real-Time Chat**: Instant messaging between clients and experts using Stream Chat
 - **Wallet Integration**: Seamless wallet connection using WalletConnect (Reown AppKit)
 - **Role-Based Access**: Separate dashboards for experts and clients with tailored experiences
 
@@ -35,7 +36,7 @@ StreamGuestPay aims to:
 
 ### Wallet Integration
 
-- **[WalletConnect (https://docs.reown.com/appkit)** - Web3 wallet connection solution
+- **[WalletConnect (Reown AppKit)](https://docs.reown.com/appkit)** - Web3 wallet connection solution
   - Multi-wallet support (MetaMask, Coinbase Wallet, WalletConnect, etc.)
   - Seamless connection experience
 
@@ -44,6 +45,14 @@ StreamGuestPay aims to:
 - **[Wagmi](https://wagmi.sh)** - React hooks for Ethereum
 - **[Viem](https://viem.sh)** - TypeScript Ethereum library
 - **[@tanstack/react-query](https://tanstack.com/query)** - Data fetching and state management
+
+### Real-Time Communication
+
+- **[Stream Chat](https://getstream.io/chat/)** - Real-time messaging platform
+  - Instant messaging between clients and experts
+  - Channel-based conversations
+  - File attachments support
+  - Custom UI with modern design
 
 ### Styling
 
@@ -56,6 +65,7 @@ StreamGuestPay aims to:
 
 - Node.js 18+ and Yarn installed
 - A WalletConnect Project ID from [Reown Dashboard](https://dashboard.reown.com)
+- A Stream Chat API Key and Secret from [Stream Dashboard](https://dashboard.getstream.io)
 
 ### Installation
 
@@ -76,6 +86,8 @@ yarn install
 
 ```bash
 NEXT_PUBLIC_REOWN_PROJECT_ID=your_project_id_here
+NEXT_PUBLIC_STREAM_API_KEY=your_stream_api_key_here
+STREAM_API_SECRET=your_stream_api_secret_here
 ```
 
 4. Run the development server:
@@ -112,16 +124,17 @@ stream-guest/
 
 ## Future Features
 
-- Chat functionality for real-time communication
 - Payment streaming integration with Superfluid
 - Advanced scheduling and calendar management
 - Review and rating system
 - Analytics and reporting
+- Video call integration
 
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Reown AppKit Documentation](https://docs.reown.com/appkit)
 - [Wagmi Documentation](https://wagmi.sh)
+- [Stream Chat Documentation](https://getstream.io/chat/docs/)
 - [Superfluid Documentation](https://docs.superfluid.finance)
 

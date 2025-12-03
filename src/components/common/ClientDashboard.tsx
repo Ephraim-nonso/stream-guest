@@ -1,17 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-interface Expert {
-  id: string;
-  name: string;
-  title: string;
-  expertise: string[];
-  walletAddress: string;
-  rating: number;
-  reviewCount: number;
-  hourlyRate: number;
-}
+import { experts } from "./data/experts";
 
 interface ScheduledCall {
   id: string;
@@ -33,39 +23,6 @@ interface CallHistory {
   cost: number;
   status: "completed" | "cancelled";
 }
-
-const experts: Expert[] = [
-  {
-    id: "1",
-    name: "Dr. Sarah Chen",
-    title: "Senior Product Manager, Former VP at Web3 Startup",
-    expertise: ["Web3", "DeFi", "Blockchain Infrastructure"],
-    walletAddress: "0x742d35Cc6634C05329...",
-    rating: 4.9,
-    reviewCount: 14,
-    hourlyRate: 300,
-  },
-  {
-    id: "2",
-    name: "Marcus Johnson",
-    title: "Chief Technology Officer, Crypto Exchange",
-    expertise: ["Security", "Smart Contracts", "Protocol Design"],
-    walletAddress: "0x8f9e5d2c1a4b3e7f6c...",
-    rating: 5.0,
-    reviewCount: 28,
-    hourlyRate: 450,
-  },
-  {
-    id: "3",
-    name: "Lisa Anderson",
-    title: "Tokenomics Specialist, Former DAO Advisor",
-    expertise: ["Tokenomics", "DAO Governance", "NFTs"],
-    walletAddress: "0x2b4e6a8c0d2f4e6a8c...",
-    rating: 4.8,
-    reviewCount: 19,
-    hourlyRate: 250,
-  },
-];
 
 const scheduledCalls: ScheduledCall[] = [
   {
@@ -106,6 +63,35 @@ export function ClientDashboard() {
     "browse-experts" | "scheduled-calls" | "history" | "chats"
   >("browse-experts");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Filter experts based on search query
+  const filteredExperts = experts.filter((expert) => {
+    if (!searchQuery.trim()) {
+      return true; // Show all experts if search is empty
+    }
+
+    const query = searchQuery.trim().toLowerCase();
+
+    // Check if any expertise exactly matches the search query (case-insensitive)
+    const hasMatchingExpertise = expert.expertise.some(
+      (exp) => exp.toLowerCase() === query
+    );
+
+    // Check if name matches
+    const nameMatches = expert.name.toLowerCase().includes(query);
+
+    // Check if any expertise contains the query (partial match)
+    const expertiseContains = expert.expertise.some((exp) =>
+      exp.toLowerCase().includes(query)
+    );
+
+    // Check if title contains the query
+    const titleMatches = expert.title.toLowerCase().includes(query);
+
+    return (
+      hasMatchingExpertise || nameMatches || expertiseContains || titleMatches
+    );
+  });
 
   const handleSendTestDeposit = (expertId: string) => {
     // TODO: Implement test deposit functionality
@@ -276,89 +262,110 @@ export function ClientDashboard() {
               </button>
             </div>
 
+            {/* Results Count */}
+            <div className="text-sm text-gray-600">
+              {searchQuery.trim() ? (
+                <span>
+                  Found {filteredExperts.length} expert
+                  {filteredExperts.length !== 1 ? "s" : ""} matching &quot;
+                  {searchQuery}&quot;
+                </span>
+              ) : (
+                <span>Showing all {filteredExperts.length} experts</span>
+              )}
+            </div>
+
             {/* Expert Listings */}
             <div className="space-y-4">
-              {experts.map((expert) => (
-                <div
-                  key={expert.id}
-                  className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    {/* Left Section: Expert Info */}
-                    <div className="flex-1">
-                      {/* Name and Title */}
-                      <h3 className="text-xl font-bold text-[#1a1a2e] mb-1">
-                        {expert.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-3">
-                        {expert.title}
-                      </p>
+              {filteredExperts.length === 0 ? (
+                <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200 text-center">
+                  <p className="text-gray-600 text-lg">
+                    No experts found matching &quot;{searchQuery}&quot;
+                  </p>
+                </div>
+              ) : (
+                filteredExperts.map((expert) => (
+                  <div
+                    key={expert.id}
+                    className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                      {/* Left Section: Expert Info */}
+                      <div className="flex-1">
+                        {/* Name and Title */}
+                        <h3 className="text-xl font-bold text-[#1a1a2e] mb-1">
+                          {expert.name}
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-3">
+                          {expert.title}
+                        </p>
 
-                      {/* Expertise Tags */}
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {expert.expertise.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full"
+                        {/* Expertise Tags */}
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {expert.expertise.map((tag, index) => (
+                            <span
+                              key={index}
+                              className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Wallet Address */}
+                        <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
                           >
-                            {tag}
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                            />
+                          </svg>
+                          <span className="font-mono">
+                            {expert.walletAddress}
                           </span>
-                        ))}
+                        </div>
+
+                        {/* Rating and Hourly Rate */}
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-2">
+                            {renderStars(expert.rating)}
+                            <span className="text-sm font-medium text-gray-700">
+                              {expert.rating}
+                            </span>
+                            <span className="text-sm text-gray-500">
+                              ({expert.reviewCount} reviews)
+                            </span>
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            <span className="font-semibold text-[#1a1a2e]">
+                              ${expert.hourlyRate}
+                            </span>{" "}
+                            per hour
+                          </div>
+                        </div>
                       </div>
 
-                      {/* Wallet Address */}
-                      <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
+                      {/* Right Section: Action Button */}
+                      <div className="md:ml-4">
+                        <button
+                          onClick={() => handleSendTestDeposit(expert.id)}
+                          className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                          />
-                        </svg>
-                        <span className="font-mono">
-                          {expert.walletAddress}
-                        </span>
+                          Send Test Deposit
+                        </button>
                       </div>
-
-                      {/* Rating and Hourly Rate */}
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2">
-                          {renderStars(expert.rating)}
-                          <span className="text-sm font-medium text-gray-700">
-                            {expert.rating}
-                          </span>
-                          <span className="text-sm text-gray-500">
-                            ({expert.reviewCount} reviews)
-                          </span>
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          <span className="font-semibold text-[#1a1a2e]">
-                            ${expert.hourlyRate}
-                          </span>{" "}
-                          per hour
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right Section: Action Button */}
-                    <div className="md:ml-4">
-                      <button
-                        onClick={() => handleSendTestDeposit(expert.id)}
-                        className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors cursor-pointer whitespace-nowrap"
-                      >
-                        Send Test Deposit
-                      </button>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         )}

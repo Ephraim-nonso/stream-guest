@@ -38,38 +38,761 @@ body {
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
 }
 
+/* Channel List Styling */
 .str-chat__channel-list {
   background: white;
+  padding: 0;
 }
 
 .str-chat__channel-list-message {
-  color: #1a1a2e;
+  color: #6b7280;
+  padding: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
 }
 
 .str-chat__channel-preview {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #f3f4f6;
+  padding: 1rem 1.25rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .str-chat__channel-preview:hover {
   background-color: #f9fafb;
 }
 
-.str-chat__message {
+.str-chat__channel-preview--active {
+  background-color: #fff7ed;
+  border-left: 3px solid #f97316;
+}
+
+.str-chat__channel-preview-messenger {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.str-chat__channel-preview-messenger-name {
+  font-weight: 600;
   color: #1a1a2e;
+  font-size: 0.9375rem;
 }
 
+.str-chat__channel-preview-messenger-last-message {
+  color: #6b7280;
+  font-size: 0.8125rem;
+  margin-top: 0.25rem;
+}
+
+/* Channel Header */
+.str-chat__header {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.25rem;
+}
+
+.str-chat__header-title {
+  font-weight: 600;
+  color: #1a1a2e;
+  font-size: 1rem;
+}
+
+.str-chat__header-subtitle {
+  color: #6b7280;
+  font-size: 0.8125rem;
+  margin-top: 0.25rem;
+}
+
+/* Message List */
+.str-chat__message-list {
+  background: #f9fafb;
+  padding: 1.5rem;
+}
+
+.str-chat__message {
+  margin-bottom: 1rem;
+}
+
+.str-chat__message-simple {
+  display: flex;
+  gap: 0.75rem;
+  max-width: 70%;
+}
+
+.str-chat__message-simple--incoming {
+  flex-direction: row;
+}
+
+.str-chat__message-simple--outgoing {
+  flex-direction: row-reverse;
+  margin-left: auto;
+}
+
+.str-chat__message-simple-content {
+  background: white;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.str-chat__message-simple--outgoing .str-chat__message-simple-content {
+  background: #f97316;
+  color: white;
+}
+
+.str-chat__message-simple-text {
+  color: #1a1a2e;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.str-chat__message-simple--outgoing .str-chat__message-simple-text {
+  color: white;
+}
+
+.str-chat__message-simple-meta {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+}
+
+.str-chat__message-simple--outgoing .str-chat__message-simple-meta {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Empty State */
+.str-chat__empty-channel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  height: 100%;
+}
+
+.str-chat__empty-channel-icon {
+  width: 4rem;
+  height: 4rem;
+  color: #d1d5db;
+  margin-bottom: 1rem;
+}
+
+.str-chat__empty-channel-text {
+  color: #6b7280;
+  font-size: 0.9375rem;
+  margin-top: 0.5rem;
+}
+
+/* Message Input - Main Container */
 .str-chat__message-input {
+  background: white;
   border-top: 1px solid #e5e7eb;
+  padding: 1rem 1.25rem;
 }
 
-.str-chat__input {
-  border: 1px solid #d1d5db;
+/* Message Input Form/Container - Flex Layout - Single Line */
+.str-chat__message-input-form,
+.str-chat__message-input-wrapper,
+.str-chat__message-input > form,
+.str-chat__message-input > div > form {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  width: 100% !important;
+}
+
+/* Force all direct children into row layout */
+.str-chat__message-input > *,
+.str-chat__message-input-form > *,
+.str-chat__message-input-wrapper > * {
+  flex-shrink: 0;
+}
+
+/* Make sure file upload section is inline */
+.str-chat__message-input-upload-button-wrapper,
+.str-chat__file-upload-button-wrapper {
+  display: inline-flex !important;
+  flex-shrink: 0 !important;
+}
+
+/* Attachment/File Upload Button - Left Side */
+.str-chat__input__file-upload-button,
+.str-chat__file-upload-button,
+button[aria-label*="file"] {
+  flex-shrink: 0 !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  min-width: 2.5rem !important;
+  min-height: 2.5rem !important;
+  border-radius: 50% !important;
+  background: #f3f4f6 !important;
+  border: 1px solid #e5e7eb !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  color: #6b7280 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.str-chat__input__file-upload-button:hover,
+.str-chat__file-upload-button:hover,
+button[aria-label*="file"]:hover {
+  background: #e5e7eb !important;
+  color: #f97316 !important;
+  border-color: #f97316 !important;
+}
+
+.str-chat__input__file-upload-button svg,
+.str-chat__file-upload-button svg,
+button[aria-label*="file"] svg {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+/* Input Container/Wrapper - Takes remaining space */
+.str-chat__input-container,
+.str-chat__input-wrapper,
+.str-chat__message-input-core,
+.str-chat__input-wrapper,
+.str-chat__input-footer-wrapper {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+/* Force textarea wrapper to be inline with buttons */
+.str-chat__textarea-wrapper {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: inline-block !important;
+}
+
+/* Text Input/Textarea */
+.str-chat__input,
+.str-chat__input-textarea,
+textarea[placeholder*="Type"],
+input[placeholder*="Type"],
+textarea[class*="str-chat"] {
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 0.9375rem !important;
+  transition: all 0.2s ease !important;
+  width: 100% !important;
+  font-family: inherit !important;
+  background: #f9fafb !important;
+  resize: none !important;
+  min-height: 2.5rem !important;
+  max-height: 8rem !important;
+  line-height: 1.5 !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+.str-chat__input:focus,
+.str-chat__input-textarea:focus,
+textarea[placeholder*="Type"]:focus,
+input[placeholder*="Type"]:focus {
+  border-color: #f97316 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1) !important;
+  background: white !important;
+}
+
+.str-chat__input__button {
+  background: #f97316;
+  color: white;
   border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
-.str-chat__input:focus {
-  border-color: #2563eb;
-  outline: none;
-  ring: 2px;
-  ring-color: #2563eb;
+.str-chat__input__button:hover {
+  background: #ea580c;
+}
+
+.str-chat__input__button:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* Avatar */
+.str-chat__avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+/* Thread */
+.str-chat__thread {
+  background: white;
+  border-left: 1px solid #e5e7eb;
+}
+
+/* Scrollbar Styling */
+.str-chat__channel-list,
+.str-chat__message-list {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
+}
+
+.str-chat__channel-list::-webkit-scrollbar,
+.str-chat__message-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.str-chat__channel-list::-webkit-scrollbar-track,
+.str-chat__message-list::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+
+.str-chat__channel-list::-webkit-scrollbar-thumb,
+.str-chat__message-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.str-chat__channel-list::-webkit-scrollbar-thumb:hover,
+.str-chat__message-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Additional Improvements */
+.str-chat__channel-preview-messenger-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.str-chat__message-simple-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Date Separator */
+.str-chat__date-separator {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.str-chat__date-separator-date {
+  background: white;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  display: inline-block;
+  border: 1px solid #e5e7eb;
+}
+
+/* Typing Indicator */
+.str-chat__typing-indicator {
+  padding: 0.75rem 1rem;
+  background: white;
+  border-radius: 1rem;
+  display: inline-block;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Attachment Preview */
+.str-chat__attachment {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+/* Link Preview */
+.str-chat__link-preview {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+/* Input Attachments */
+.str-chat__input-attachment {
+  border: 1px dashed #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+}
+
+/* File Upload Button */
+.str-chat__file-upload-button {
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+.str-chat__file-upload-button:hover {
+  color: #f97316;
+}
+
+/* Attachment Icon/Button Styling */
+.str-chat__input__file-upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.str-chat__input__file-upload-button:hover {
+  color: #f97316;
+}
+
+/* Send Button - Right side */
+.str-chat__send-button,
+.str-chat__message-input-send-button,
+button[aria-label*="Send"],
+button[type="submit"]:not([aria-label*="file"]) {
+  flex-shrink: 0 !important;
+  background: #f97316 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  min-width: 2.5rem !important;
+  min-height: 2.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.str-chat__send-button:hover,
+.str-chat__message-input-send-button:hover,
+button[aria-label*="Send"]:hover,
+button[type="submit"]:not([aria-label*="file"]):hover:not(:disabled) {
+  background: #ea580c !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3) !important;
+}
+
+.str-chat__send-button:disabled,
+.str-chat__message-input-send-button:disabled,
+button[aria-label*="Send"]:disabled,
+button[type="submit"]:disabled {
+  background: #d1d5db !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  opacity: 0.6 !important;
+}
+
+.str-chat__send-button svg,
+.str-chat__message-input-send-button svg,
+button[aria-label*="Send"] svg,
+button[type="submit"] svg {
+  width: 1.125rem !important;
+  height: 1.125rem !important;
+}
+
+/* Message Input Form Layout */
+.str-chat__message-input-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* Attachment Area */
+.str-chat__input-attachment-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.str-chat__input-attachment {
+  border: 1px dashed #d1d5db !important;
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 0.75rem !important;
+  background: #f9fafb !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-size: 0.8125rem !important;
+  color: #6b7280 !important;
+}
+
+/* File Input Styling */
+input[type="file"] {
+  display: none !important;
+}
+
+label[for*="file"],
+label[class*="file"] {
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 0.8125rem;
+  transition: color 0.2s ease;
+}
+
+label[for*="file"]:hover,
+label[class*="file"]:hover {
+  color: #f97316;
+}
+
+/* Attachment Preview/Indicator */
+.str-chat__input-attachment-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+/* Override any conflicting Stream Chat default styles */
+.str-chat__message-input * {
+  box-sizing: border-box;
+}
+
+/* Force single line layout for message input area */
+.str-chat__message-input {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.str-chat__message-input > div,
+.str-chat__message-input > form {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  width: 100% !important;
+}
+
+/* Ensure attachment section doesn't wrap */
+.str-chat__input__files-button-wrapper,
+.str-chat__input__file-upload-button-wrapper {
+  order: 1 !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* Text input section - takes remaining space */
+.str-chat__input-wrapper,
+.str-chat__message-input-core-wrapper {
+  order: 2 !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Send button section - always on the right */
+.str-chat__input__send-button-wrapper,
+.str-chat__message-input-send-button-wrapper {
+  order: 3 !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* Prevent any wrapping */
+.str-chat__message-input-form,
+.str-chat__message-input-wrapper,
+.str-chat__message-input > form,
+.str-chat__message-input > div {
+  flex-wrap: nowrap !important;
+}
+
+/* Hide attachment text/label if it's causing layout issues */
+.str-chat__input-attachment-area label {
+  display: none !important;
+}
+
+.str-chat__input-attachment-area input[type="file"] {
+  display: none !important;
+}
+
+/* Additional aggressive overrides for Stream Chat message input */
+.str-chat__message-input .str-chat__input__files-button-wrapper {
+  display: inline-flex !important;
+  flex-shrink: 0 !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.str-chat__message-input .str-chat__input-wrapper {
+  display: flex !important;
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.str-chat__message-input .str-chat__input__send-button-wrapper {
+  display: inline-flex !important;
+  flex-shrink: 0 !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Ensure all buttons align to center vertically */
+.str-chat__message-input button {
+  vertical-align: middle !important;
+  align-self: center !important;
+}
+
+/* Make sure textarea is inline with buttons */
+.str-chat__message-input textarea {
+  vertical-align: middle !important;
+  align-self: center !important;
+}
+
+/* COMPREHENSIVE SINGLE-LINE LAYOUT FOR MESSAGE INPUT */
+/* Target the root message input container */
+.str-chat__message-input {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  width: 100% !important;
+}
+
+/* Target all form and wrapper elements to be horizontal */
+.str-chat__message-input > form,
+.str-chat__message-input > div,
+.str-chat__message-input > * {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  width: 100% !important;
+  flex-wrap: nowrap !important;
+}
+
+/* File upload button - always first, left side - minimal space */
+.str-chat__message-input button[aria-label*="file"],
+.str-chat__message-input button[aria-label*="File"],
+.str-chat__input__file-upload-button,
+.str-chat__file-upload-button {
+  order: 1 !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  min-width: 2.5rem !important;
+  max-width: 2.5rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Text input wrapper - takes remaining space, middle */
+.str-chat__input-wrapper,
+.str-chat__message-input-core,
+.str-chat__input-container,
+.str-chat__message-input-core-wrapper {
+  order: 2 !important;
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+/* Textarea itself - inline with buttons, takes maximum space */
+.str-chat__message-input textarea,
+.str-chat__input-textarea,
+.str-chat__message-input textarea[class*="str-chat"] {
+  order: 2 !important;
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  vertical-align: middle !important;
+  align-self: center !important;
+  display: block !important;
+}
+
+/* Send button - always last, right side - minimal space */
+.str-chat__message-input button[type="submit"]:not([aria-label*="file"]),
+.str-chat__message-input button[aria-label*="Send"],
+.str-chat__send-button {
+  order: 3 !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  min-width: 2.5rem !important;
+  max-width: 2.5rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Hide any attachment area text/labels that break layout */
+.str-chat__message-input label[for*="file"],
+.str-chat__input-attachment-area {
+  display: none !important;
+}
+
+/* Ensure all children stay in one row */
+.str-chat__message-input * {
+  flex-wrap: nowrap !important;
 }

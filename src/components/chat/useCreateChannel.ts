@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useChatContext } from 'stream-chat-react';
-import { useAccount } from 'wagmi';
-import { createChannelId } from './ChatUtils';
-import { useRouter } from 'next/navigation';
+import { useChatContext } from "stream-chat-react";
+import { useAccount } from "wagmi";
+import { createChannelId } from "./ChatUtils";
+import { useRouter } from "next/navigation";
 
 /**
  * Hook to create or get a channel between two users
@@ -15,13 +15,13 @@ export function useCreateChannel() {
 
   const createOrGetChannel = async (otherAddress: string) => {
     if (!client || !address) {
-      console.error('Chat client or address not available');
+      console.error("Chat client or address not available");
       return null;
     }
 
     try {
       const channelId = createChannelId(address, otherAddress);
-      const channelType = 'messaging';
+      const channelType = "messaging";
 
       // Try to get existing channel or create new one
       const channel = client.channel(channelType, channelId, {
@@ -33,7 +33,7 @@ export function useCreateChannel() {
 
       return channel;
     } catch (error) {
-      console.error('Error creating/getting channel:', error);
+      console.error("Error creating/getting channel:", error);
       return null;
     }
   };
@@ -50,4 +50,3 @@ export function useCreateChannel() {
     navigateToChat,
   };
 }
-
