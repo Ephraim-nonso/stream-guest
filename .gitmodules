@@ -1,0 +1,3 @@
+[submodule "guest-contracts/lib/protocol-monorepo"]
+	path = guest-contracts/lib/protocol-monorepo
+	url = https://github.com/superfluid-finance/protocol-monorepo

@@ -168,6 +168,49 @@ export function ChatInterfaceInner({
               <MessageList />
             </div>
             <div className="bg-white border-t border-gray-200 shadow-lg">
+              <style
+                dangerouslySetInnerHTML={{
+                  __html: `
+                  .str-chat__message-input {
+                    display: flex !important;
+                    flex-direction: row !important;
+                    align-items: center !important;
+                    gap: 0.75rem !important;
+                  }
+                  .str-chat__message-input form {
+                    display: flex !important;
+                    flex-direction: row !important;
+                    align-items: center !important;
+                    width: 100% !important;
+                    gap: 0.75rem !important;
+                    flex-wrap: nowrap !important;
+                  }
+                  .str-chat__message-input textarea {
+                    flex: 1 1 0% !important;
+                    flex-grow: 1 !important;
+                    min-width: 300px !important;
+                    width: auto !important;
+                    max-width: none !important;
+                  }
+                  .str-chat__message-input form > div:not(:last-child),
+                  .str-chat__message-input form > div:first-of-type,
+                  .str-chat__message-input form > div:nth-child(2) {
+                    flex: 1 1 0% !important;
+                    flex-grow: 1 !important;
+                    min-width: 300px !important;
+                    width: auto !important;
+                    max-width: none !important;
+                    display: flex !important;
+                    flex-direction: row !important;
+                  }
+                  .str-chat__message-input button {
+                    flex: 0 0 auto !important;
+                    flex-shrink: 0 !important;
+                    flex-grow: 0 !important;
+                  }
+                `,
+                }}
+              />
               <MessageInput />
             </div>
           </Window>
