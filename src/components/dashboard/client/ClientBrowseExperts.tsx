@@ -1,11 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { useRouter } from "next/navigation";
 import { useChatContext } from "stream-chat-react";
 import { createChannelId } from "@/components/chat/ChatUtils";
-import { experts } from "@/components/common/data/experts";
+import { getAllUsers, type User } from "@/lib/api";
+
+interface ExpertDisplay {
+  id: string;
+  name: string;
+  title: string;
+  expertise: string[];
+  walletAddress: string;
+  rating: number;
+  reviewCount: number;
+  hourlyRate: number;
+}
 
 export function ClientBrowseExperts() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,6 +25,9 @@ export function ClientBrowseExperts() {
   const [selectedExpertise, setSelectedExpertise] = useState<Set<string>>(
     new Set()
   );
+  const [experts, setExperts] = useState<ExpertDisplay[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { address } = useAccount();
   const router = useRouter();
 
@@ -25,6 +39,43 @@ export function ClientBrowseExperts() {
   } catch {
     client = null;
   }
+
+  // Fetch experts from backend
+  useEffect(() => {
+    const fetchExperts = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const users = await getAllUsers('expert');
+        // Transform backend User data to ExpertDisplay format
+        const expertsData: ExpertDisplay[] = users.map((user: User) => {
+          // Parse expertise from areaOfExpertise (comma-separated string)
+          const expertise = user.areaOfExpertise
+            ? user.areaOfExpertise.split(',').map(e => e.trim()).filter(Boolean)
+            : [];
+          
+          return {
+            id: user.address,
+            name: user.fullName || 'Unknown',
+            title: user.professionalTitle || '',
+            expertise: expertise,
+            walletAddress: user.address,
+            rating: 4.5, // Default rating (can be enhanced later)
+            reviewCount: 0, // Default review count (can be enhanced later)
+            hourlyRate: user.hourlyRate || 0,
+          };
+        });
+        setExperts(expertsData);
+      } catch (err) {
+        console.error('Error fetching experts:', err);
+        setError('Failed to load experts. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExperts();
+  }, []);
 
   // Get all unique expertise values from experts
   const allExpertise = Array.from(
@@ -108,7 +159,14 @@ export function ClientBrowseExperts() {
         return;
       }
 
-      const expertAddress = expert.walletAddress.toLowerCase();
+      // Normalize addresses - ensure consistent format
+      // Stream Chat requires lowercase addresses for user IDs
+      let expertAddress = expert.walletAddress.toLowerCase().trim();
+      
+      // Ensure address has 0x prefix for consistency
+      if (!expertAddress.startsWith('0x')) {
+        expertAddress = '0x' + expertAddress;
+      }
 
       // Check if address is truncated (contains "...")
       if (expertAddress.includes("...")) {
@@ -119,13 +177,23 @@ export function ClientBrowseExperts() {
         return;
       }
 
-      // Remove "0x" prefix for channel ID creation (but keep it for member identification)
-      const clientAddress = address.toLowerCase();
+      // Normalize client address
+      let clientAddress = address.toLowerCase().trim();
+      if (!clientAddress.startsWith('0x')) {
+        clientAddress = '0x' + clientAddress;
+      }
 
-      // Ensure expert user exists in Stream Chat before creating channel
+      console.log('Creating channel between:', {
+        clientAddress,
+        expertAddress,
+        expertName: expert.name
+      });
+
+      // Ensure both client and expert users exist in Stream Chat before creating channel
       // This is required - Stream Chat won't allow adding non-existent users to channels
       try {
-        const userResponse = await fetch("/api/stream/user", {
+        // Create/update expert user in Stream Chat
+        const expertUserResponse = await fetch("/api/stream/user", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -136,16 +204,35 @@ export function ClientBrowseExperts() {
           }),
         });
 
-        if (!userResponse.ok) {
-          const error = await userResponse.json();
+        if (!expertUserResponse.ok) {
+          const error = await expertUserResponse.json();
           console.warn(
             "Failed to create expert user (may already exist):",
             error
           );
-          // Continue anyway - user might already exist
+        }
+
+        // Create/update client user in Stream Chat
+        const clientUserResponse = await fetch("/api/stream/user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: clientAddress,
+            // userName will be fetched from backend in the API route
+          }),
+        });
+
+        if (!clientUserResponse.ok) {
+          const error = await clientUserResponse.json();
+          console.warn(
+            "Failed to create client user (may already exist):",
+            error
+          );
         }
       } catch (userError) {
-        console.warn("Error creating expert user:", userError);
+        console.warn("Error creating users in Stream Chat:", userError);
         // Continue anyway - we'll let Stream Chat handle the error if user doesn't exist
       }
 
@@ -182,6 +269,23 @@ export function ClientBrowseExperts() {
 
       // Watch the channel to ensure it's active and create it if it doesn't exist
       await channel.watch();
+      
+      console.log('Channel created and watched:', {
+        channelId,
+        channelType,
+        members: channel.state.members,
+        channelState: channel.state
+      });
+
+      // Ensure both members are added to the channel
+      // Sometimes Stream Chat doesn't add members automatically
+      try {
+        await channel.addMembers([clientAddress, expertAddress]);
+        console.log('Members added to channel:', [clientAddress, expertAddress]);
+      } catch (addMemberError) {
+        console.warn('Error adding members (may already be members):', addMemberError);
+        // Continue - members might already be added
+      }
 
       // Navigate to chats tab with the full channel ID (for URL parsing)
       router.push(`/${address}/dashboard/chats?channel=${fullChannelId}`);
@@ -428,28 +532,71 @@ export function ClientBrowseExperts() {
         </div>
       )}
 
-      {/* Expert Listings */}
-      <div className="space-y-3 sm:space-y-4">
-        {filteredExperts.length === 0 ? (
-          <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200 text-center">
-            <p className="text-gray-600 text-lg mb-2">
-              No experts found
-              {searchQuery.trim() && ` matching &quot;${searchQuery}&quot;`}
-              {selectedExpertise.size > 0 &&
-                ` with selected expertise${
-                  selectedExpertise.size > 1 ? "s" : ""
-                }`}
-            </p>
-            {(searchQuery.trim() || selectedExpertise.size > 0) && (
-              <button
-                onClick={clearFilters}
-                className="text-orange-500 hover:text-orange-600 font-medium text-sm mt-2"
-              >
-                Clear all filters
-              </button>
-            )}
+      {/* Loading State */}
+      {isLoading && (
+        <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200 text-center">
+          <div className="flex items-center justify-center gap-3">
+            <svg
+              className="animate-spin h-6 w-6 text-orange-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <span className="text-gray-600">Loading experts...</span>
           </div>
-        ) : (
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !isLoading && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-8 shadow-sm text-center">
+          <p className="text-red-600 text-lg mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* Expert Listings */}
+      {!isLoading && !error && (
+        <div className="space-y-3 sm:space-y-4">
+          {filteredExperts.length === 0 ? (
+            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200 text-center">
+              <p className="text-gray-600 text-lg mb-2">
+                No experts found
+                {searchQuery.trim() && ` matching &quot;${searchQuery}&quot;`}
+                {selectedExpertise.size > 0 &&
+                  ` with selected expertise${
+                    selectedExpertise.size > 1 ? "s" : ""
+                  }`}
+              </p>
+              {(searchQuery.trim() || selectedExpertise.size > 0) && (
+                <button
+                  onClick={clearFilters}
+                  className="text-orange-500 hover:text-orange-600 font-medium text-sm mt-2"
+                >
+                  Clear all filters
+                </button>
+              )}
+            </div>
+          ) : (
           filteredExperts.map((expert) => (
             <div
               key={expert.id}
@@ -575,8 +722,9 @@ export function ClientBrowseExperts() {
               </div>
             </div>
           ))
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

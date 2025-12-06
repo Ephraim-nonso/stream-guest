@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useRouter } from "next/navigation";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { registerUser } from "@/lib/api";
 
 export function ExpertSetup({
   onBack,
@@ -25,6 +26,8 @@ export function ExpertSetup({
     hourlyRate: "300",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const formatAddress = (addr: string | undefined) => {
     if (!addr) return "";
@@ -49,7 +52,7 @@ export function ExpertSetup({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
@@ -57,17 +60,40 @@ export function ExpertSetup({
       newErrors.areaOfExpertise = "Please fill out this field.";
     }
 
-    setErrors(newErrors);
+    if (!address) {
+      newErrors.general = "Please connect your wallet first.";
+    }
 
-    if (Object.keys(newErrors).length === 0) {
-      // TODO: Handle form submission
-      // Save user role
-      setUserRole("expert");
-      // Navigate to dashboard on successful submission
-      if (address) {
+    setErrors(newErrors);
+    setSubmitError(null);
+
+    if (Object.keys(newErrors).length === 0 && address) {
+      setIsSubmitting(true);
+      try {
+        // Register user on backend
+        await registerUser({
+          address,
+          role: 'expert',
+          fullName: formData.fullName,
+          professionalTitle: formData.professionalTitle,
+          areaOfExpertise: formData.areaOfExpertise,
+          hourlyRate: formData.hourlyRate,
+        });
+
+        // Save user role
+        setUserRole("expert");
+        
+        // Navigate to dashboard on successful submission
         router.push(`/${address}/dashboard/overview`);
-      } else if (onComplete) {
-        onComplete();
+      } catch (error) {
+        console.error('Registration failed:', error);
+        setSubmitError(
+          error instanceof Error 
+            ? error.message 
+            : 'Failed to register. Please try again.'
+        );
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
@@ -220,20 +246,55 @@ export function ExpertSetup({
               </div>
             </div>
 
+            {/* Error Message */}
+            {submitError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="text-sm text-red-600">{submitError}</p>
+              </div>
+            )}
+
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
               <button
                 type="button"
                 onClick={onBack}
-                className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium cursor-pointer text-sm sm:text-base"
+                disabled={isSubmitting}
+                className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium cursor-pointer text-sm sm:text-base"
               >
                 Back
               </button>
               <button
                 type="submit"
-                className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium cursor-pointer text-sm sm:text-base"
+                disabled={isSubmitting}
+                className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium cursor-pointer text-sm sm:text-base flex items-center justify-center gap-2"
               >
-                Complete Setup
+                {isSubmitting ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    <span>Registering...</span>
+                  </>
+                ) : (
+                  'Complete Setup'
+                )}
               </button>
             </div>
           </form>

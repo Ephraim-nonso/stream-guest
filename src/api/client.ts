@@ -1,7 +1,9 @@
 // API client configuration
-// Example implementation:
+// This file provides a generic API client, but we primarily use the typed functions from @/lib/api
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+import { BACKEND_URL } from '@/constants/backend';
+
+const API_BASE_URL = BACKEND_URL;
 
 export const apiClient = {
   get: async <T>(url: string): Promise<T> => {
@@ -50,6 +52,7 @@ export const apiClient = {
     return response.json();
   },
 };
+
 
 
 

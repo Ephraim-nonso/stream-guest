@@ -50,7 +50,11 @@ export async function POST(request: NextRequest) {
 
       // Generate token for the user
       // The userId must match exactly with what's used in userData.id
-      const normalizedUserId = userId.toLowerCase();
+      // Normalize and ensure 0x prefix for addresses
+      let normalizedUserId = userId.toLowerCase().trim();
+      if (normalizedUserId && !normalizedUserId.startsWith('0x') && normalizedUserId.length >= 40) {
+        normalizedUserId = '0x' + normalizedUserId;
+      }
       const token = streamClient.createToken(normalizedUserId);
 
       return NextResponse.json({ token });

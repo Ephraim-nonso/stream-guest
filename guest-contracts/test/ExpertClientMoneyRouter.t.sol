@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {Test, console} from "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 import {ExpertClientMoneyRouter} from "../src/ExpertClientMoneyRouter.sol";
 import {
     ISuperfluid,
-    ISuperToken,
-    IConstantFlowAgreementV1
+    ISuperToken
 } from "../lib/protocol-monorepo/packages/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 
 /**
@@ -19,7 +18,7 @@ contract ExpertClientMoneyRouterTest is Test {
     // Mock contracts
     MockSuperfluid public mockHost;
     MockSuperToken public mockToken;
-    MockCFA public mockCFA;
+    MockCFA public mockCfa;
     
     // Test addresses
     address public owner;
@@ -50,10 +49,10 @@ contract ExpertClientMoneyRouterTest is Test {
         // Deploy mock contracts
         mockHost = new MockSuperfluid();
         mockToken = new MockSuperToken();
-        mockCFA = new MockCFA();
+        mockCfa = new MockCFA();
         
         // Set up mock host to return mock CFA
-        mockHost.setCFA(address(mockCFA));
+        mockHost.setCfa(address(mockCfa));
         
         // Deploy router
         router = new ExpertClientMoneyRouter(ISuperfluid(address(mockHost)), ISuperToken(address(mockToken)));
@@ -509,7 +508,7 @@ contract ExpertClientMoneyRouterTest is Test {
 contract MockSuperfluid {
     address public cfa;
     
-    function setCFA(address _cfa) external {
+    function setCfa(address _cfa) external {
         cfa = _cfa;
     }
     

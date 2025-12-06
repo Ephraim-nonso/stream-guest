@@ -4,6 +4,7 @@ import { StreamChat } from "stream-chat";
 /**
  * API endpoint to create or update a Stream Chat user
  * This is needed when creating channels with users who haven't connected yet
+ * Now fetches user data from backend to set proper names
  */
 export async function POST(request: NextRequest) {
   try {
@@ -35,14 +36,36 @@ export async function POST(request: NextRequest) {
       // Initialize Stream Chat client with server-side credentials
       const streamClient = new StreamChat(apiKey, apiSecret);
 
-      // Normalize user ID
-      const normalizedUserId = userId.toLowerCase();
+      // Normalize user ID - ensure consistent format
+      let normalizedUserId = userId.toLowerCase().trim();
+      // Ensure it has 0x prefix if it's an address
+      if (normalizedUserId && !normalizedUserId.startsWith('0x') && normalizedUserId.length >= 40) {
+        normalizedUserId = '0x' + normalizedUserId;
+      }
+
+      // Try to fetch user data from backend if userName not provided
+      let displayName = userName;
+      if (!displayName) {
+        try {
+          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+          const userResponse = await fetch(`${backendUrl}/api/users/${normalizedUserId}`);
+          if (userResponse.ok) {
+            const { user } = await userResponse.json();
+            displayName = user?.fullName || normalizedUserId.slice(0, 6) + "..." + normalizedUserId.slice(-4);
+          } else {
+            displayName = normalizedUserId.slice(0, 6) + "..." + normalizedUserId.slice(-4);
+          }
+        } catch (err) {
+          // If backend is unavailable, use default
+          displayName = normalizedUserId.slice(0, 6) + "..." + normalizedUserId.slice(-4);
+        }
+      }
 
       // Upsert (create or update) the user
       // This ensures the user exists in Stream Chat before they can be added to channels
       await streamClient.upsertUser({
         id: normalizedUserId,
-        name: userName || normalizedUserId.slice(0, 6) + "..." + normalizedUserId.slice(-4),
+        name: displayName,
         // You can add more user properties here if needed
       });
 
@@ -74,5 +97,6 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
 
 

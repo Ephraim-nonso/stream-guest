@@ -3,6 +3,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { Chat, useCreateChatClient } from "stream-chat-react";
+import { getUser } from "@/lib/api";
 
 interface StreamChatProviderProps {
   children: ReactNode;
@@ -17,8 +18,9 @@ export function StreamChatProvider({ children }: StreamChatProviderProps) {
   const [userToken, setUserToken] = useState<string | null>(null);
   const [tokenError, setTokenError] = useState<string | null>(null);
   const [isLoadingToken, setIsLoadingToken] = useState(false);
+  const [userName, setUserName] = useState<string>("");
 
-  // Generate user token from backend API
+  // Fetch user data from backend and generate token
   useEffect(() => {
     // Only proceed if all required values are available
     if (!isConnected || !address || !STREAM_API_KEY) {
@@ -29,11 +31,28 @@ export function StreamChatProvider({ children }: StreamChatProviderProps) {
     const normalizedAddress = address.toLowerCase();
     let isMounted = true;
 
-    const generateToken = async () => {
+    const initializeChat = async () => {
       setIsLoadingToken(true);
       setTokenError(null);
 
       try {
+        // First, try to get user data from backend
+        let displayName = `${address.slice(0, 6)}...${address.slice(-4)}`;
+        try {
+          const user = await getUser(address);
+          if (user && user.fullName) {
+            displayName = user.fullName;
+          }
+        } catch (err) {
+          // If backend is unavailable, use default name
+          console.warn("Could not fetch user data from backend:", err);
+        }
+
+        if (isMounted) {
+          setUserName(displayName);
+        }
+
+        // Generate Stream Chat token
         const response = await fetch("/api/stream/token", {
           method: "POST",
           headers: {
@@ -65,6 +84,22 @@ export function StreamChatProvider({ children }: StreamChatProviderProps) {
             setUserToken(data.token);
             setTokenError(null);
             setIsLoadingToken(false);
+            
+            // Update user in Stream Chat with backend data
+            try {
+              await fetch("/api/stream/user", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  userId: normalizedAddress,
+                  userName: displayName,
+                }),
+              });
+            } catch (err) {
+              console.warn("Could not update Stream Chat user:", err);
+            }
           } else {
             console.error("No token received from API", data);
             setUserToken(null);
@@ -73,7 +108,7 @@ export function StreamChatProvider({ children }: StreamChatProviderProps) {
           }
         }
       } catch (error) {
-        console.error("Error generating Stream token:", error);
+        console.error("Error initializing chat:", error);
         if (isMounted) {
           setUserToken(null);
           setTokenError(
@@ -84,7 +119,7 @@ export function StreamChatProvider({ children }: StreamChatProviderProps) {
       }
     };
 
-    generateToken();
+    initializeChat();
 
     return () => {
       isMounted = false;
@@ -92,7 +127,11 @@ export function StreamChatProvider({ children }: StreamChatProviderProps) {
   }, [isConnected, address]);
 
   // Normalize address to lowercase for consistency
-  const normalizedAddress = address?.toLowerCase() || "";
+  // Ensure it has 0x prefix for Stream Chat user ID
+  let normalizedAddress = address?.toLowerCase().trim() || "";
+  if (normalizedAddress && !normalizedAddress.startsWith('0x')) {
+    normalizedAddress = '0x' + normalizedAddress;
+  }
 
   // Debug logging (remove in production)
   useEffect(() => {}, [
@@ -108,7 +147,7 @@ export function StreamChatProvider({ children }: StreamChatProviderProps) {
     tokenOrProvider: userToken || undefined,
     userData: {
       id: normalizedAddress,
-      name: address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "",
+      name: userName || (address ? `${address.slice(0, 6)}...${address.slice(-4)}` : ""),
       // You can add more user data here
     },
   });

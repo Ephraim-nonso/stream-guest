@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/navigation';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { getUser } from '@/lib/api';
 import { Header } from '@/components/layout';
 import {
   Hero,
@@ -32,18 +33,40 @@ export default function Home() {
     }
   }, [isConnected, userRole, setUserRole]);
 
-  // Redirect to dashboard ONLY if user is already set up and connected
-  // Must have explicit role value ('expert' or 'client'), not null/undefined
+  // Check if user exists in backend and redirect accordingly
   useEffect(() => {
-    if (isConnected && address && userRole === 'expert') {
-      router.push(`/${address}/dashboard/overview`);
-      return;
-    }
-    if (isConnected && address && userRole === 'client') {
-      router.push(`/${address}/dashboard/browse-experts`);
-      return;
-    }
-  }, [isConnected, address, userRole, router]);
+    const checkUserRegistration = async () => {
+      if (!isConnected || !address) return;
+
+      try {
+        // Check if user exists in backend
+        const user = await getUser(address);
+        
+        if (user) {
+          // User exists in backend, set role and redirect
+          setUserRole(user.role);
+          if (user.role === 'expert') {
+            router.push(`/${address}/dashboard/overview`);
+          } else if (user.role === 'client') {
+            router.push(`/${address}/dashboard/browse-experts`);
+          }
+        } else if (userRole) {
+          // User has role in localStorage but not in backend
+          // Keep the role and allow them to proceed (they might need to re-register)
+        }
+      } catch (error) {
+        // If backend is not available, fall back to localStorage role
+        console.warn('Could not check user registration:', error);
+        if (userRole === 'expert') {
+          router.push(`/${address}/dashboard/overview`);
+        } else if (userRole === 'client') {
+          router.push(`/${address}/dashboard/browse-experts`);
+        }
+      }
+    };
+
+    checkUserRegistration();
+  }, [isConnected, address, router, setUserRole, userRole]);
 
   // Update view state when wallet connects/disconnects
   useEffect(() => {

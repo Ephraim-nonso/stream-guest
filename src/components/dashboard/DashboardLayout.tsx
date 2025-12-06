@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ReactNode } from 'react';
 import { Header } from '@/components/layout';
+import { UnreadCountBadgeWrapper } from '@/components/chat/UnreadCountBadgeWrapper';
 
 type TabType = 'overview' | 'schedule' | 'history' | 'chats' | 'browse-experts' | 'scheduled-calls';
 
@@ -51,17 +52,19 @@ export function DashboardLayout({ address, isExpert, activeTab, children }: Dash
           <div className="flex gap-3 sm:gap-6 overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 scrollbar-hide">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
+              const isChatsTab = tab.id === 'chats';
               return (
                 <Link
                   key={tab.id}
                   href={getTabPath(tab.id)}
-                  className={`pb-2 px-1 font-medium transition-colors cursor-pointer whitespace-nowrap text-sm sm:text-base flex-shrink-0 ${
+                  className={`pb-2 px-1 font-medium transition-colors cursor-pointer whitespace-nowrap text-sm sm:text-base flex-shrink-0 flex items-center ${
                     isActive
                       ? 'text-orange-500 border-b-2 border-orange-500'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   {tab.label}
+                  {isChatsTab && <UnreadCountBadgeWrapper />}
                 </Link>
               );
             })}
