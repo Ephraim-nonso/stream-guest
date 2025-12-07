@@ -131,4 +131,162 @@ export async function deleteUser(address: string): Promise<{ message: string }> 
   return response.json();
 }
 
+// ============================================
+// Scheduled Calls API
+// ============================================
+
+export interface ScheduledCall {
+  id: number;
+  clientAddress: string;
+  expertAddress: string;
+  date: string;
+  time: string;
+  duration: number;
+  hourlyRate: number;
+  status: 'pending' | 'pending_changes' | 'confirmed' | 'cancelled' | 'completed';
+  topics: string[];
+  createdAt: string;
+  updatedAt: string;
+  confirmedAt?: string;
+  expertName?: string;
+  clientName?: string;
+  organization?: string;
+  areaOfExpertise?: string;
+  // Proposed changes (when expert requests changes)
+  proposedDate?: string;
+  proposedTime?: string;
+  proposedDuration?: number;
+  proposedTopics?: string[];
+}
+
+export interface CreateScheduledCallData {
+  clientAddress: string;
+  expertAddress: string;
+  date: string;
+  time: string;
+  duration?: number;
+  hourlyRate: number;
+  topics?: string[];
+}
+
+/**
+ * Create a new scheduled call
+ */
+export async function createScheduledCall(
+  data: CreateScheduledCallData
+): Promise<{ message: string; call: ScheduledCall }> {
+  const response = await fetch(API_ENDPOINTS.createScheduledCall, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to create scheduled call');
+  }
+
+  return response.json();
+}
+
+/**
+ * Get scheduled calls for a client
+ */
+export async function getClientScheduledCalls(
+  clientAddress: string
+): Promise<ScheduledCall[]> {
+  const response = await fetch(API_ENDPOINTS.getClientScheduledCalls(clientAddress));
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch scheduled calls');
+  }
+
+  const { calls } = await response.json();
+  return calls;
+}
+
+/**
+ * Get scheduled calls for an expert
+ */
+export async function getExpertScheduledCalls(
+  expertAddress: string
+): Promise<ScheduledCall[]> {
+  const response = await fetch(API_ENDPOINTS.getExpertScheduledCalls(expertAddress));
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch scheduled calls');
+  }
+
+  const { calls } = await response.json();
+  return calls;
+}
+
+/**
+ * Confirm a scheduled call
+ */
+export async function confirmScheduledCall(
+  callId: number
+): Promise<{ message: string; call: ScheduledCall }> {
+  const response = await fetch(API_ENDPOINTS.confirmScheduledCall(callId), {
+    method: 'PATCH',
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to confirm scheduled call');
+  }
+
+  return response.json();
+}
+
+export interface UpdateScheduledCallData {
+  proposedDate: string;
+  proposedTime: string;
+  proposedDuration?: number;
+  proposedTopics?: string[];
+}
+
+/**
+ * Update a scheduled call with proposed changes (expert requests changes)
+ */
+export async function updateScheduledCall(
+  callId: number,
+  data: UpdateScheduledCallData
+): Promise<{ message: string; call: ScheduledCall }> {
+  const response = await fetch(API_ENDPOINTS.updateScheduledCall(callId), {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update scheduled call');
+  }
+
+  return response.json();
+}
+
+/**
+ * Accept proposed changes (client confirms expert's changes)
+ */
+export async function acceptScheduledCallChanges(
+  callId: number
+): Promise<{ message: string; call: ScheduledCall }> {
+  const response = await fetch(API_ENDPOINTS.acceptScheduledCallChanges(callId), {
+    method: 'PATCH',
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to accept proposed changes');
+  }
+
+  return response.json();
+}
+
 

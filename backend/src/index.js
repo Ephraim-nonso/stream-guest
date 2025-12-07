@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { userRouter } from './routes/users.js';
+import { scheduledCallRouter } from './routes/scheduledCalls.js';
 import { initializeStorage } from './storage/storage.js';
 
 // Load environment variables
@@ -28,6 +29,7 @@ app.get('/health', (req, res) => {
 
 // API Routes
 app.use('/api/users', userRouter);
+app.use('/api/scheduled-calls', scheduledCallRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

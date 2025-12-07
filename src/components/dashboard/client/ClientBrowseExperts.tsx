@@ -267,8 +267,11 @@ export function ClientBrowseExperts() {
         members: [clientAddress, expertAddress],
       });
 
-      // Watch the channel to ensure it's active and create it if it doesn't exist
-      await channel.watch();
+      // Watch the channel with presence enabled to ensure it's active and create it if it doesn't exist
+      await channel.watch({
+        presence: true,
+        state: true,
+      });
       
       console.log('Channel created and watched:', {
         channelId,

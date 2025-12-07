@@ -16,6 +16,15 @@ export const API_ENDPOINTS = {
   
   // Health check
   health: `${BACKEND_URL}/health`,
+  
+  // Scheduled Calls
+  createScheduledCall: `${BACKEND_URL}/api/scheduled-calls`,
+  getClientScheduledCalls: (address: string) => `${BACKEND_URL}/api/scheduled-calls/client/${address}`,
+  getExpertScheduledCalls: (address: string) => `${BACKEND_URL}/api/scheduled-calls/expert/${address}`,
+  confirmScheduledCall: (id: number) => `${BACKEND_URL}/api/scheduled-calls/${id}/confirm`,
+  updateScheduledCall: (id: number) => `${BACKEND_URL}/api/scheduled-calls/${id}/update`,
+  acceptScheduledCallChanges: (id: number) => `${BACKEND_URL}/api/scheduled-calls/${id}/accept-changes`,
+  getScheduledCallById: (id: number) => `${BACKEND_URL}/api/scheduled-calls/${id}`,
 } as const;
 
 

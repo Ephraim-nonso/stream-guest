@@ -97,9 +97,12 @@ export function ChatInterfaceInner({
       // Get or create the channel
       const channel = client.channel(channelType, actualChannelId);
 
-      // Watch the channel asynchronously to ensure it exists
+      // Watch the channel with presence enabled
       channel
-        .watch()
+        .watch({
+          presence: true,
+          state: true,
+        })
         .then(() => {
           setActiveChannel(channel);
           setTimeout(() => setHasInitialized(true), 0);
@@ -224,10 +227,25 @@ export function ChatInterfaceInner({
           <Channel channel={activeChannel || undefined}>
             <Window>
               <CustomChannelHeader />
-              <div className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-50 to-white p-4 sm:p-6 relative min-h-0">
+              <div
+                className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-50 to-white p-4 sm:p-6 relative"
+                style={{
+                  minHeight: 0,
+                  maxHeight: "100%",
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                }}
+              >
                 <MessageList Message={CustomMessage} />
               </div>
-              <div className="flex-shrink-0 relative z-10 bg-white">
+              <div
+                className="flex-shrink-0 relative z-10 bg-white"
+                style={{
+                  position: "sticky",
+                  bottom: 0,
+                  width: "100%",
+                }}
+              >
                 <MessageInput
                   Input={CustomMessageInput}
                   additionalTextareaProps={{
