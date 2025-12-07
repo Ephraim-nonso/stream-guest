@@ -211,11 +211,13 @@ export function ChatInterfaceInner({
                 presence: true,
                 limit: 100,
               }}
-              Preview={(props) => (
+              Preview={(previewProps) => (
                 <CustomChannelPreview
-                  {...props}
-                  setActiveChannel={setActiveChannel}
-                  activeChannel={activeChannel}
+                  {...previewProps}
+                  setActiveChannel={(newChannel) =>
+                    setActiveChannel(newChannel || null)
+                  }
+                  activeChannel={activeChannel || undefined}
                 />
               )}
             />

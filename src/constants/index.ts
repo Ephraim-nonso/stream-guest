@@ -2,5 +2,5 @@
 export * from './routes';
 export * from './endpoints';
 export * from './contract';
-export * from './backend';
+export { API_ENDPOINTS as BACKEND_API_ENDPOINTS, BACKEND_URL } from './backend';
 

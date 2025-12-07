@@ -5,18 +5,14 @@ import type { Channel, UserResponse } from 'stream-chat';
 import { formatDistanceToNow } from 'date-fns';
 
 interface CustomChannelPreviewProps extends ChannelPreviewUIComponentProps {
-  setActiveChannel?: (channel: Channel) => void;
-  activeChannel?: Channel | null;
+  // Additional props can be added here if needed
 }
 
-export function CustomChannelPreview({ 
-  channel, 
-  setActiveChannel,
-  activeChannel 
-}: CustomChannelPreviewProps) {
+export function CustomChannelPreview(props: CustomChannelPreviewProps) {
+  const { channel } = props;
   const { client } = useChatContext();
-  const { displayTitle, displayImage, latestMessage, unread } = useChannelPreviewInfo({ channel });
-  const isActive = activeChannel?.id === channel.id;
+  const { displayTitle, displayImage } = useChannelPreviewInfo({ channel });
+  const isActive = props.activeChannel?.id === channel.id;
   
   // Get the other member (not the current user)
   const members = Object.values(channel.state?.members || {});
@@ -24,9 +20,11 @@ export function CustomChannelPreview({
     (member) => member.user?.id !== client?.userID
   )?.user as UserResponse | undefined;
 
-  const lastMessage = latestMessage || channel.state?.messages?.[channel.state.messages.length - 1];
-  const unreadCount = unread || channel.countUnread();
-  const isOnline = otherMember?.presence?.status === 'online';
+  const lastMessage = channel.state?.messages?.[channel.state.messages.length - 1];
+  const unreadCount = channel.countUnread();
+  // Check online status from member data, not user response
+  const member = members.find((m) => m.user?.id === otherMember?.id);
+  const isOnline = member?.user?.online === true;
 
   // Get initials from name
   const getInitials = (name: string) => {
@@ -44,8 +42,8 @@ export function CustomChannelPreview({
   return (
     <div
       onClick={() => {
-        if (setActiveChannel) {
-          setActiveChannel(channel);
+        if (props.setActiveChannel) {
+          props.setActiveChannel(channel);
         }
       }}
       className={`str-chat__channel-preview-custom ${

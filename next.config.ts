@@ -24,6 +24,19 @@ const nextConfig: NextConfig = {
       ];
     }
 
+    // Exclude guest-contracts and backend directories from webpack processing
+    config.module = config.module || {};
+    config.module.rules = config.module.rules || [];
+    config.module.rules.push({
+      test: /\.(ts|tsx|js|jsx)$/,
+      exclude: [
+        /node_modules/,
+        /guest-contracts/,
+        /backend/,
+        /overview/,
+      ],
+    });
+
     // Optional wallet connector dependencies are now installed
     // No need to alias them to false anymore
 
