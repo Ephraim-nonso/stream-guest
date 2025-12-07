@@ -6,7 +6,7 @@ import { ReactNode } from 'react';
 import { Header } from '@/components/layout';
 import { UnreadCountBadgeWrapper } from '@/components/chat/UnreadCountBadgeWrapper';
 
-type TabType = 'overview' | 'schedule' | 'history' | 'chats' | 'browse-experts' | 'scheduled-calls';
+type TabType = 'overview' | 'schedule' | 'history' | 'chats' | 'browse-experts' | 'scheduled-calls' | 'wallet';
 
 interface DashboardLayoutProps {
   address: string;
@@ -25,6 +25,7 @@ export function DashboardLayout({ address, isExpert, activeTab, children }: Dash
     { id: 'schedule', label: 'Schedule' },
     { id: 'history', label: 'History' },
     { id: 'chats', label: 'Chats' },
+    { id: 'wallet', label: 'Wallet' },
   ];
 
   const clientTabs = [
@@ -32,6 +33,7 @@ export function DashboardLayout({ address, isExpert, activeTab, children }: Dash
     { id: 'scheduled-calls', label: 'Scheduled Calls' },
     { id: 'history', label: 'History' },
     { id: 'chats', label: 'Chats' },
+    { id: 'wallet', label: 'Wallet' },
   ];
 
   const tabs = isExpert ? expertTabs : clientTabs;

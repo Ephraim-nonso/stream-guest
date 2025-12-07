@@ -9,10 +9,12 @@ import { ExpertOverview } from "@/components/dashboard/expert/ExpertOverview";
 import { ExpertSchedule } from "@/components/dashboard/expert/ExpertSchedule";
 import { ExpertHistory } from "@/components/dashboard/expert/ExpertHistory";
 import { ExpertChats } from "@/components/dashboard/expert/ExpertChats";
+import { ExpertWallet } from "@/components/wallet/ExpertWallet";
 import { ClientBrowseExperts } from "@/components/dashboard/client/ClientBrowseExperts";
 import { ClientScheduledCalls } from "@/components/dashboard/client/ClientScheduledCalls";
 import { ClientHistory } from "@/components/dashboard/client/ClientHistory";
 import { ClientChats } from "@/components/dashboard/client/ClientChats";
+import { ClientWallet } from "@/components/wallet/ClientWallet";
 
 type TabType =
   | "overview"
@@ -20,7 +22,8 @@ type TabType =
   | "history"
   | "chats"
   | "browse-experts"
-  | "scheduled-calls";
+  | "scheduled-calls"
+  | "wallet";
 
 export default function DashboardPage() {
   const params = useParams();
@@ -66,12 +69,13 @@ export default function DashboardPage() {
   useEffect(() => {
     if (isLoading || !effectiveRole) return;
 
-    const expertTabs = ["overview", "schedule", "history", "chats"];
+    const expertTabs = ["overview", "schedule", "history", "chats", "wallet"];
     const clientTabs = [
       "browse-experts",
       "scheduled-calls",
       "history",
       "chats",
+      "wallet",
     ];
 
     if (effectiveRole === "expert" && !expertTabs.includes(tab)) {
@@ -95,6 +99,8 @@ export default function DashboardPage() {
           return <ExpertHistory />;
         case "chats":
           return <ExpertChats />;
+        case "wallet":
+          return <ExpertWallet />;
         default:
           return <ExpertOverview />;
       }
@@ -108,6 +114,8 @@ export default function DashboardPage() {
           return <ClientHistory />;
         case "chats":
           return <ClientChats />;
+        case "wallet":
+          return <ClientWallet />;
         default:
           return <ClientBrowseExperts />;
       }
