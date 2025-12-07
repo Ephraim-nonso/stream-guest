@@ -1,7 +1,7 @@
 {
   "name": "stream-guest-backend",
   "version": "1.0.0",
-  "description": "Backend API for StreamGuestPay platform - tracks registered experts and clients",
+  "description": "Backend API for KonsultPay platform - tracks registered experts and clients",
   "main": "src/index.js",
   "type": "module",
   "scripts": {

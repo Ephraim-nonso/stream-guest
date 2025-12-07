@@ -40,7 +40,7 @@ export function Header() {
             </svg>
           </div>
           <span className="text-lg sm:text-xl md:text-2xl font-semibold text-[#1a1a2e] truncate">
-            StreamGuestPay
+            KonsultPay
           </span>
         </div>
 

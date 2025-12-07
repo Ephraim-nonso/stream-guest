@@ -103,7 +103,7 @@ export function HowToUseModal({ isOpen, onClose }: HowToUseModalProps) {
 
         {/* Title */}
         <h2 className="text-xl font-bold text-[#1a1a2e] mb-6 text-center pr-6">
-          How to Use StreamPay
+          How to Use KonsultPay
         </h2>
 
         {/* Step content */}

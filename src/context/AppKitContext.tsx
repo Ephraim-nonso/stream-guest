@@ -16,7 +16,7 @@ if (!projectId) {
 
 // Set up metadata
 const metadata = {
-  name: "StreamPay",
+  name: "KonsultPay",
   description: "Real-time payment streaming for expert consultations",
   url:
     typeof window !== "undefined"

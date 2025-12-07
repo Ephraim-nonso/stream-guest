@@ -9,7 +9,7 @@ import {
 
 /**
  * @title ExpertClientMoneyRouter
- * @author StreamGuestPay
+ * @author KonsultPay
  * @notice A contract that tracks experts and clients and enables seamless token streaming
  *         from clients to experts using Superfluid's Money Router pattern.
  * @dev This contract uses the CFA's operator functions (createFlowByOperator, etc.) to allow

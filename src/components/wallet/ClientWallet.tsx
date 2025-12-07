@@ -308,13 +308,13 @@ export function ClientWallet() {
                   <div className="flex justify-between">
                     <span className="text-blue-700">Bank Name:</span>
                     <span className="text-blue-900 font-medium">
-                      StreamPay Trust Bank
+                      KonsultPay Trust Bank
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-blue-700">Account Name:</span>
                     <span className="text-blue-900 font-medium">
-                      StreamPay Holdings LLC
+                      KonsultPay Holdings LLC
                     </span>
                   </div>
                   <div className="flex justify-between">

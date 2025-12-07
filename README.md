@@ -1,14 +1,14 @@
-# StreamGuestPay
+# KonsultPay
 
 A real-time payment streaming platform for expert consultations. Get paid per second with complete transparency and zero trust required.
 
 ## Overview
 
-StreamGuestPay is a Web3-powered platform that revolutionizes how experts get paid for consultations. Instead of traditional invoicing and payment delays, payments stream directly into the expert's wallet every second during the call. The stream automatically stops when the call ends, providing complete transparency and control for both parties.
+KonsultPay is a Web3-powered platform that revolutionizes how experts get paid for consultations. Instead of traditional invoicing and payment delays, payments stream directly into the expert's wallet every second during the call. The stream automatically stops when the call ends, providing complete transparency and control for both parties.
 
 ## The Aim of the Project
 
-StreamGuestPay aims to:
+KonsultPay aims to:
 
 - **Eliminate Payment Friction**: No more invoicing, waiting, or follow-ups. Money flows in real-time during consultations.
 - **Provide Complete Transparency**: Both experts and clients can see payments streaming in real-time with blockchain verification.

@@ -114,7 +114,7 @@ export function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
 
         {/* Main Title */}
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a1a2e] text-center mb-3 sm:mb-4 px-2">
-          Welcome to StreamPay
+          Welcome to KonsultPay
         </h1>
 
         {/* Subtitle */}

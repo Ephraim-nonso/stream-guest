@@ -41,7 +41,7 @@ export function HowToUseButton() {
             ? 'bg-blue-700 text-white'
             : 'bg-blue-600 hover:bg-blue-700 text-white'
         }`}
-        aria-label="How to use StreamPay"
+        aria-label="How to use KonsultPay"
       >
         <svg
           className="w-7 h-7 transition-transform duration-300 group-hover:scale-110"

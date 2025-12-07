@@ -19,8 +19,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "StreamPay - Get Paid Per Second",
-  description: "Real-time payment streaming for expert consultations. Get paid instantly via USDC streams powered by Superfluid.",
+  title: "KonsultPay - Get Paid Per Second",
+  description:
+    "Real-time payment streaming for expert consultations. Get paid instantly via USDC streams powered by Superfluid.",
 };
 
 export default async function RootLayout({
@@ -39,9 +40,7 @@ export default async function RootLayout({
         <AppKitContextProvider cookies={cookies}>
           <AppProvider>
             <UnreadCountProvider>
-              <StreamChatProvider>
-                {children}
-              </StreamChatProvider>
+              <StreamChatProvider>{children}</StreamChatProvider>
             </UnreadCountProvider>
           </AppProvider>
         </AppKitContextProvider>

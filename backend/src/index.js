@@ -16,7 +16,14 @@ initializeStorage();
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:3000',
+    'http://localhost:3000',
+    // Allow all Vercel deployments (preview and production)
+    /\.vercel\.app$/,
+    // Add your production domain here if you have one
+    // 'https://your-domain.com'
+  ],
   credentials: true
 }));
 app.use(express.json());
